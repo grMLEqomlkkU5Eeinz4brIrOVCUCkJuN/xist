@@ -59,7 +59,7 @@ async function purge(dir: string): Promise<boolean> {
 }
 
 export async function removeFile(path: string): Promise<void> {
-	return fs.rm(path);
+	return fs.rm(path, { force: true });
 }
 
 export async function purgeEmptyPath(dir: string): Promise<boolean> {
