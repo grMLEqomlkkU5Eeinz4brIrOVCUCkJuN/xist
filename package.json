@@ -40,7 +40,8 @@
 		"hybrid",
 		"ttl",
 		"lru",
-		"xxhash"
+		"xxhash",
+		"xxbun-cache"
 	],
 	"author": "",
 	"license": "MIT",
