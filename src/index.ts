@@ -352,8 +352,31 @@ class Cache {
 	 */
 	async destroyDatabase() {
 		if (hasPersistentDatabaseLocation(this.dbPath)) {
-			this.close();
-			await removeFile(this.dbPath);
+			try {
+				this.db.query("PRAGMA wal_checkpoint(TRUNCATE)")
+			} catch { }
+
+			this.close()
+
+			// Retry logic for Windows file locks
+			const removeWithRetry = async (path: string, maxRetries = 5) => {
+				for (let i = 0; i < maxRetries; i++) {
+					try {
+						await removeFile(path)
+						return
+					} catch (err: any) {
+						if (err.code === 'EBUSY' && i < maxRetries - 1) {
+							await new Promise(resolve => setTimeout(resolve, 50 * Math.pow(2, i)))
+							continue
+						}
+						if (err.code !== 'ENOENT') throw err // Ignore "file not found"
+					}
+				}
+			}
+
+			await removeWithRetry(this.dbPath)
+			await removeWithRetry(this.dbPath + '-wal')
+			await removeWithRetry(this.dbPath + '-shm')
 		}
 	}
 }
