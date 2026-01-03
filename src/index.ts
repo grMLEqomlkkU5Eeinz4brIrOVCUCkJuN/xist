@@ -199,10 +199,10 @@ class Cache {
 				atime: now,
 			})
 		}
-	
+
 		// Execute single transaction
 		this.insertManyTx(rows)
-	
+
 		// Optional single LRU pass
 		if (this.maxEntries && this.maxEntries > 0) {
 			await this._evictLRU()
@@ -272,7 +272,19 @@ class Cache {
 		this.stmtDelete.run(key)
 		this._delFile(rv?.filename)
 	}
-
+	/**
+	 * Closes the database connection.
+	 * Must be called before destroyDatabase() to release file locks.
+	 *
+	 * @example
+	 * ```typescript
+	 * await cache.close()
+	 * await cache.destroyDatabase()
+	 * ```
+	 */
+	close() {
+		this.db.close()
+	}
 	/**
 	 * Evicts the least recently used entries when cache exceeds maxEntries.
 	 * Private method called automatically by set() when maxEntries is configured.
@@ -340,7 +352,8 @@ class Cache {
 	 */
 	async destroyDatabase() {
 		if (hasPersistentDatabaseLocation(this.dbPath)) {
-			await removeFile(this.dbPath)
+			this.close();
+			await removeFile(this.dbPath);
 		}
 	}
 }
