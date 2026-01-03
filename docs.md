@@ -1,6 +1,6 @@
-# xxstache API Documentation
+# xxbun-cache API Documentation
 
-Complete API reference and benchmark results for xxstache.
+Complete API reference for xxbun-cache.
 
 ## Table of Contents
 
@@ -15,13 +15,13 @@ Complete API reference and benchmark results for xxstache.
 ## Installation
 
 ```bash
-npm install xxstache
+npm install xxbun-cache
 ```
 
 ## Quick Start
 
 ```typescript
-import Cache from 'xxstache'
+import Cache from 'xxbun-cache'
 
 const cache = new Cache({
   ttl: 3600,        // 1 hour TTL
@@ -244,7 +244,7 @@ interface CacheOptions {
 ### Basic Usage
 
 ```typescript
-import Cache from 'xxstache'
+import Cache from 'xxbun-cache'
 
 const cache = new Cache()
 
@@ -332,7 +332,7 @@ if (status !== 'miss') {
 ### Using Adapter for Automatic Purging
 
 ```typescript
-import { Adapter } from 'xxstache'
+import { Adapter } from 'xxbun-cache'
 
 const adapter = new Adapter({ ttl: 7200 })
 await adapter.init()
@@ -345,26 +345,6 @@ const value = await adapter.cache.get('key')
 // Clean up
 await adapter.shutdown()
 ```
-
-## Benchmarks
-
-Benchmark results with xxstache:
-
-### Write Performance
-
-**Test:** Writing 3000 iterations of 15 different data sizes (10B to 500KB)
-
-- **Average:** 40.29 μs/record
-- **Range:** 10B to 500KB files
-- **Storage:** Automatic (SQLite for small, disk for large)
-- **Platform:** Windows 10
-
-### Read Performance
-
-**Test:** Reading 3000 iterations of cached entries
-
-- **Average:** 13.52 μs/record
-- **Notes:** Includes both in-DB and disk-backed entries
 
 ## Performance Characteristics
 
@@ -518,7 +498,7 @@ The original `@next-boost/hybrid-disk-cache` uses simple hash-based directory st
 
 ### Is it safe to share a cache between processes?
 
-- The SQLite backend (better-sqlite3) is robust with WAL for concurrency, but coordinating multiple Node processes that also write files under the same directory can be tricky. Prefer a single writer process per cache path.
+- The SQLite backend (`bun:sqlite`) is robust with WAL for concurrency, but coordinating multiple Bun processes that also write files under the same directory can be tricky. Prefer a single writer process per cache path.
 
 ### Can I store strings or JSON?
 

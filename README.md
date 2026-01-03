@@ -1,23 +1,21 @@
-# xxstache
+# xxbun-cache
 
-A port of [`@next-boost/hybrid-disk-cache`](https://github.com/next-boost/hybrid-disk-cache) for toy projects, tweaked to use xxhash64 for hashing.
-
-This is a simple hybrid disk cache for Node.js. It automatically stores small values in SQLite and large values on disk, so your database doesn't get bloated.
+A Bun-native port of xxstache (which itself is based on [@next-boost/hybrid-disk-cache](https://github.com/next-boost/hybrid-disk-cache)), optimized for Bun's native SQLite implementation.
+This is a simple hybrid disk cache for Bun. It automatically stores small values in SQLite and large values on disk, so your database doesn't get bloated.
 
 Why? Well, you probably don't want to stuff a 50MB file into your SQLite database. This cache handles that for you by storing anything over 10KB (configurable) as a regular file, while keeping the fast SQLite lookups for small stuff.
-
 It also supports TTL expiration, LRU eviction when you hit size limits, and automatically cleans up expired entries.
 
-The original implementation uses a simple hash-based directory structure. This port uses xxhash64 instead for the file organization.
-
+The implementation uses xxhash64 for file hashing and leverages Bun's native bun:sqlite module for superior 
+performance
 ```bash
-npm install xxstache
+npm install xxbun-cache
 ```
 
 Using it is pretty straightforward:
 
 ```typescript
-import Cache from 'xxstache'
+import Cache from 'xxbun-cache'
 
 const cache = new Cache({
   ttl: 3600,        // entries expire after 1 hour
@@ -116,7 +114,7 @@ const cache = new Cache({
 There's also an `Adapter` class if you want automatic purging with some console output:
 
 ```typescript
-import { Adapter } from 'xxstache'
+import { Adapter } from 'xxbun-cache'
 
 const adapter = new Adapter({ ttl: 7200 })
 await adapter.init()
@@ -144,7 +142,7 @@ Full API documentation and benchmarks: **[docs.md](docs.md)**
 
 ### Development
 
-Tests run on Node.js 20 across Windows, macOS, and Linux. Try the benchmarks to see how it performs on your machine:
+Tests run on Bun across Windows, macOS, and Linux. Try the benchmarks to see how it performs on your machine:
 
 ```bash
 npm test        # run tests
