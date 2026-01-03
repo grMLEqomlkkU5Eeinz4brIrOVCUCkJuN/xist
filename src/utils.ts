@@ -2,7 +2,7 @@ import xxhash from "xxhash-wasm";
 import fs from "fs-extra";
 import { mkdirSync } from "fs";
 import { tmpdir } from "os";
-import { join, basename } from "path";
+import { join, basename, dirname } from "path";
 import { DEFAULT_DB_NAME, DEFAULT_DIRECTORY_NAME } from "./consts.js";
 
 let hasher: Awaited<ReturnType<typeof xxhash>> | null = null;
@@ -75,13 +75,13 @@ export function hasPersistentDatabaseLocation(path: string): boolean {
 }
 
 export function extractPathAndFilename(path: string): [string] | [string, string] {
-	const filename = basename(path);
-	if (filename.includes(".")) {
-		const pathWithoutFilename = path.replace(filename, "");
-		return [pathWithoutFilename, filename];
-	}
-	return [path];
+  const filename = basename(path);
+  if (filename.includes(".")) {
+    return [dirname(path) + "/", filename];
+  }
+  return [path];
 }
+
 export function getFileCachePath(path?: string): string {
 	const defaultTmpDirName = join(tmpdir(), DEFAULT_DIRECTORY_NAME);
 	return path === undefined ? defaultTmpDirName : path;
